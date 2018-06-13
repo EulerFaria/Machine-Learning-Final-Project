@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import random as rn
 import matplotlib.pyplot as plt
+import re
 
 from sklearn.model_selection import StratifiedKFold, KFold
 from sklearn.metrics import mean_absolute_error as mae
@@ -13,25 +14,6 @@ from keras.layers.core import Activation,Dense,Dropout
 
 
 
-
-def split_balanced(data,labels,target,val_size,shuffle=False):
-    idx_tr = []
-    idx_val = []
-
-    for i in labels: 
-        X_class = data[data[target] == i].index.tolist()
-
-        if shuffle: rn.shuffle(X_class)
-
-        length = len(X_class)
-
-        split = int(val_size * length)
-
-        idx_val += X_class[-split:]
-        idx_tr += X_class[:-split]
-
-    
-    return data.iloc[idx_tr,:],data.iloc[idx_val,:]
 
 
 def split_by_date(data,date_col,val_size):
@@ -50,15 +32,15 @@ def print_score(m,X_train,y_train,X_val,y_val):
     ypred = m.predict(X_train)
     ytrue = y_train
     print(f" Train Score:")
-    print(f"RMSE: {rmse(ytrue,ypred):.4f}, MAE: {mae(ytrue,ypred):.4f}")
-    if hasattr(m, 'oob_score_'): print(f"Oob score : {m.oob_score_:.4f}")    
+    print(f"RMSE: {rmse(ytrue,ypred):.6f}, MAE: {mae(ytrue,ypred):.6f}")
+    if hasattr(m, 'oob_score_'): print(f"Oob score : {m.oob_score_:.6f}")    
         
         
     ypred = m.predict(X_val)
     ytrue = y_val
     print('-'*30)
     print(f" Val Score:")
-    print(f"RMSE: {rmse(ytrue,ypred):.4f}, MAE: {mae(ytrue,ypred):.4f}")
+    print(f"RMSE: {rmse(ytrue,ypred):.6f}, MAE: {mae(ytrue,ypred):.6f}")
 
 
     
@@ -138,6 +120,7 @@ def add_datepart(df, fldname, drop=True, time=False):
 
 
 
+    
 
 
 def MLP_Regressor(n_estimators,dp=None,input_dim=3):
